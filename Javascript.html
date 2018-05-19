@@ -1,0 +1,111 @@
+<script type="text/javascript">
+  $(document).ready(function(){
+  $('select').formSelect()
+  $('#notes').trigger('autoresize')  
+  $('.datepicker').datepicker({   
+  selectMonths: true, // Creates a dropdown to control month
+ selectYears: 15, // Creates a dropdown of 15 years to control year
+ autoClose : true    });
+   });
+  function updateScreen(URL){
+  console.log("From Client side callback",URL)
+  var newUrl = URL.toString()
+  $( '#spinner' ).hide( 'slow' )
+  $( '#output' ).show( 'slow' )
+  $( '#outputCard' ).append('<a href="' + newUrl +'">Click to view PDF</a>')
+  };
+  function calculate(){
+  var r = $( '#rental' ).val()
+  var o = $( '#osteoAmount' ).val()
+  var a = $( '#massageAmount' ).val()
+  var og = $( '#osteoGift' ).val()
+  var mg = $( '#massageGift' ).val()
+  var m = $( '#redeem' ).val()
+  var p = $( '#paid' ).val()
+  var ra = Number(r)+Number(a)
+  console.log("ra value",ra)
+  var rag = Number(ra) + Number(mg)
+  console.log("rag value",rag)
+  console.log("osteo",o)
+  console.log("osteo Gift",og)
+  var per = (0.13)
+  var x = rag
+  var tax = rag*per
+  console.log("tax value",Number.parseFloat(tax).toFixed(2))
+  var xtax = Number(x) + Number(tax)
+  console.log("xtax plus tax",xtax)
+  console.log("m",m)
+  var cost = Number(xtax)+Number(o)+Number(og)-Number(m)
+  console.log("Cost",cost)
+  $( '#hst' ).val(Number.parseFloat(tax).toFixed(2))
+  $( '#total' ).val(Number.parseFloat(cost).toFixed(2))
+
+  };
+  
+  $( 'input' ).change( calculate );
+  function clearNumbers(ele) {
+    $(ele).find(':input').each(function() {
+        switch(this.type) {
+            case 'number':
+                $(this).val(Number( ));
+                break;
+        }
+    });
+}
+  $( '#treatment' ).change( function(){
+  clearNumbers($(' form '))
+  var treatment = $( '#treatment' ).val()
+  if (treatment == "Massage Therapy"){
+  $( '#osteo_div' ).hide( 'slow' )
+  $( '#osteoGift_div' ).hide( 'slow' )
+  $( '#massage_div' ).show( 'slow' )
+  $( '#massageGift_div' ).hide( 'slow' )
+  $( '#rental_div' ).hide( 'slow' )
+  }else{
+  if (treatment == "Osteopathy"){
+  $( '#osteo_div' ).show( 'slow' )
+  $( '#osteoGift_div' ).hide( 'slow' )
+  $( '#massage_div' ).hide( 'slow' )
+  $( '#massageGift_div' ).hide( 'slow' )
+  $( '#rental_div' ).hide( 'slow' )
+  }else{
+  if (treatment == "Massage Gift Card"){
+  $( '#osteo_div' ).hide( 'slow' )
+  $( '#osteoGift_div' ).hide( 'slow' )
+  $( '#massage_div' ).hide( 'slow' )
+  $( '#massageGift_div' ).show( 'slow' )
+  $( '#rental_div' ).hide( 'slow' )
+  }else{
+  if (treatment == "Osteo Gift Card"){
+  $( '#osteo_div' ).hide( 'slow' )
+  $( '#osteoGift_div' ).show( 'slow' )
+  $( '#massage_div' ).hide( 'slow' )
+  $( '#massageGift_div' ).hide( 'slow' )
+  $( '#rental_div' ).hide( 'slow' )
+  }else{
+  if (treatment == "Rent"){
+  $( '#osteo_div' ).hide( 'slow' )
+  $( '#osteoGift_div' ).hide( 'slow' )
+  $( '#massage_div' ).hide( 'slow' )
+  $( '#massageGift_div' ).hide( 'slow' )
+  $( '#rental_div' ).show( 'slow' )
+  }}}}}});
+  
+  function preventFormSubmit() {
+  var forms = document.querySelectorAll('form');
+  for (var i = 0; i < forms.length; i++) {
+  forms[i].addEventListener('submit', function(event) {
+  event.preventDefault();
+  });
+  };
+  };
+  
+  window.addEventListener('load', preventFormSubmit);
+  
+  function handleFormSubmit(formObject) {
+  $( 'form' ).hide( 'slow' )
+  $( '#spinner' ).show( 'slow' )
+  google.script.run.withSuccessHandler(updateScreen).processForm(formObject);
+  
+  };
+</script>
